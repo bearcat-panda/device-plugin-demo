@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: device-plugin
+  namespace: kube-system
+  labels:
+    app: device-plugin
+spec:
+  selector:
+    matchLabels:
+      app: device-plugin
+  template:
+    metadata:
+      labels:
+        app: device-plugin
+    spec:
+      containers:
+        - name: device-plugin
+          image: registry.cn-hangzhou.aliyuncs.com/bearcat-panda/device-plugin:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: "1"
+              memory: "512Mi"
+            requests:
+              cpu: "0.1"
+              memory: "128Mi"
+          volumeMounts:
+            - name: device-plugin
+              mountPath: /var/lib/kubelet/device-plugins
+            - name: demo
+              mountPath: /etc/demo
+      volumes:
+        - name: device-plugin
+          hostPath:
+            path: /var/lib/kubelet/device-plugins
+        - name: demo
+          hostPath:
+            path: /etc/demo
